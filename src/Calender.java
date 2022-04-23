@@ -1,28 +1,101 @@
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 public class Calender {
-    public static void main(String[] args) {
-        int[] monthEnd = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        Scanner sc = new Scanner(System.in);
+    static int[] monthEnd = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    static int[] leapMonthEnd = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-        while (true) {
-           System.out.println("원하는 달을 입력하세요. 0을 입력하면 종료됩니다.");
-           int n = sc.nextInt();
-           if(n==0) {
-               break;
-           }
-           if(n<1 || n>12){
-               System.out.println("0에서 12사이의 수를 입력하세요");
-           } else {
-               System.out.printf("%d월은 %d일까지 있습니다.\n", n, monthEnd[n - 1]);
-           }
+
+    static Scanner sc = new Scanner(System.in);
+
+    static int inputYear() {
+        int year;
+        System.out.println("원하는 년도를 입력하세요.");
+        while(true) {
+            try {
+                year = sc.nextInt();
+                if(year > 0){
+                    break;
+                }
+            } catch (InputMismatchException e) {
+                sc.nextLine();
+                System.out.println("숫자를 입력하세요.");
+            }
         }
 
+        return year;
+    }
+
+    static boolean leapYear(int year){
+        if(year%4==0 && year%100==0 && year%400!=0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static int inputMonth() {
+        int month;
+        System.out.println("원하는 월을 입력하세요.");
+        while(true) {
+            try {
+                month = sc.nextInt();
+                if(month>=1 && month<=12){
+                    break;
+                } else {
+                    System.out.println("0에서 12사이의 수를 입력하세요");
+                }
+            } catch (InputMismatchException e) {
+                sc.nextLine();
+                System.out.println("숫자를 입력하세요.");
+            }
+        }
+        return month;
+    }
+
+    static void printCalender(int year, int month) {
+        System.out.printf("%d년 %d월\n",year,month);
         System.out.println("일\t월\t화\t수\t목\t금\t토");
-        System.out.println("--------------------------");
-        System.out.println("1\t2\t3\t4\t5\t6\t7");
-        System.out.println("8\t9\t10\t11\t12\t13\t14");
-        System.out.println("15\t16\t17\t18\t19\t20\t21");
-        System.out.println("22\t23\t24\t25\t26\t27\t28");
+
+        if(leapYear(year)) {
+            for(int i = 1; i <= monthEnd[month-1]; i++ ) {
+                System.out.printf("%d\t",i);
+                if(i%7==0){
+                    System.out.println();
+                }
+            }
+            System.out.println();
+            if(month!=2) {
+                System.out.println();
+            }
+
+        } else {
+            for(int i = 1; i <= leapMonthEnd[month-1]; i++ ) {
+                System.out.printf("%d\t",i);
+                if(i%7==0){
+                    System.out.println();
+                }
+            }
+            System.out.println();
+            if(month!=2) {
+                System.out.println();
+            }
+        }
+    }
+    public static void main(String[] args) {
+        while(true) {
+            printCalender(inputYear(),inputMonth());
+            try{
+                System.out.println("나가려면 0이나 아무 문자나 입력하세요.");
+                int exit = sc.nextInt();
+                if(exit == 0) {
+                    break;
+                }
+            } catch (InputMismatchException e) {
+                break;
+            }
+
+
+        }
     }
 }
