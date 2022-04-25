@@ -205,13 +205,10 @@ public class Calender {
 
     static void printComma(int year, int month, int date) {
         for(int i = 0; i < 7; i++) {
-            if (date >= 1) {
-                if (false) {
-                    //일정이 있다면
+            if (date-6+i >= 1) {
+                if (todolist.containsKey(String.valueOf(year)+String.valueOf(month)+String.valueOf(date-6+i))) {
                     System.out.print("`\t");
-
                 } else {
-                    //일정이 없다면
                     System.out.print("\t");
                 }
             } else {
