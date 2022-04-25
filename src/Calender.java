@@ -1,9 +1,12 @@
+import java.time.MonthDay;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
 public class Calender {
     static int[] monthEnd = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     static int[] leapMonthEnd = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+
 
     static Scanner sc = new Scanner(System.in);
 
@@ -26,11 +29,7 @@ public class Calender {
     }
 
     static boolean leapYear(int year){
-        if(year%4==0 && year%100==0 && year%400!=0) {
-            return true;
-        } else {
-            return false;
-        }
+        return (year%400==0 && year%100!=0 && year%4!=0);
     }
 
     static int inputMonth() {
@@ -72,6 +71,32 @@ public class Calender {
         return day;
     }
 
+    static int circulateDay(int year, int month) {
+        int retDay = 6;
+        for(int i = 1583; i < year; i++) {
+            if(i%400 == 0) {
+                retDay += 2;
+            } else if (i%100 == 0) {
+                retDay += 1;
+            } else if (i%4 == 0) {
+                retDay += 2;
+            } else {
+                retDay += 1;
+            }
+        }
+
+        for (int i = 1; i <month; i++) {
+            if(leapYear(year)) {
+                retDay += leapMonthEnd[i-1];
+            } else {
+                retDay += monthEnd[i-1];
+            }
+        }
+
+        return retDay%7;
+
+    }
+
 
     static void printCalender(int year, int month, int day) {
         System.out.printf("%d년 %d월\n",year,month);
@@ -111,8 +136,13 @@ public class Calender {
         }
     }
     public static void main(String[] args) {
+        int nowYear, nowMonth;
+
         while(true) {
-            printCalender(inputYear(),inputMonth(),inputDay());
+            nowYear = inputYear();
+            nowMonth = inputMonth();
+
+            printCalender(nowYear,nowMonth,circulateDay(nowYear, nowMonth));
             try{
                 System.out.println("나가려면 0이나 아무 문자나 입력하세요.");
                 int exit = sc.nextInt();
