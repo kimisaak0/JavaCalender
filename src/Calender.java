@@ -1,14 +1,53 @@
-import java.time.MonthDay;
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.time.LocalDate;
+
 
 public class Calender {
     static int[] monthEnd = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     static int[] leapMonthEnd = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-
-
     static Scanner sc = new Scanner(System.in);
+
+    static void consoleUI() {
+        System.out.println("1. 일정 등록");
+        System.out.println("2. 일정 검색");
+        System.out.println("3. 달력 보기");
+        System.out.println("4. 프로그램 종료");
+
+        while(true) {
+            try {
+                int num = sc.nextInt();
+                switch(num) {
+                    case 1:
+                        //일정등록 함수 호출
+                        break;
+                    case 2:
+                        //일정검색 함수
+                        break;
+                    case 3:
+                        LocalDate now = LocalDate.now();
+                        int nowYear = now.getYear();
+                        int nowMonth = now.getMonthValue();
+                        int nowDay = circulateDay(nowYear,nowMonth);
+                        printCalender(nowYear,nowMonth,nowDay);
+                        break;
+                    case 4:
+                        return;
+                    default:
+                        System.out.println("메뉴를 다시 선택해주세요.");
+                        break;
+                }
+
+            } catch (InputMismatchException e) {
+                sc.nextLine();
+
+            }
+        }
+
+
+    }
+
 
     static int inputYear() {
         int year;
@@ -135,23 +174,9 @@ public class Calender {
             }
         }
     }
+
     public static void main(String[] args) {
-        int nowYear, nowMonth;
+        consoleUI();
 
-        while(true) {
-            nowYear = inputYear();
-            nowMonth = inputMonth();
-
-            printCalender(nowYear,nowMonth,circulateDay(nowYear, nowMonth));
-            try{
-                System.out.println("나가려면 0이나 아무 문자나 입력하세요.");
-                int exit = sc.nextInt();
-                if(exit == 0) {
-                    break;
-                }
-            } catch (InputMismatchException e) {
-                break;
-            }
-        }
     }
 }
