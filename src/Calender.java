@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 import java.time.LocalDate;
@@ -6,6 +9,8 @@ import java.time.LocalDate;
 public class Calender {
     static int[] monthEnd = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     static int[] leapMonthEnd = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    static HashMap<String, ArrayList<String>> todolist = new HashMap<>();
 
     static Scanner sc = new Scanner(System.in);
 
@@ -16,13 +21,31 @@ public class Calender {
             System.out.println("3. 달력 보기");
             System.out.println("4. 프로그램 종료");
 
+            Integer whatYear;
+            Integer whatMonth;
+            Integer whatDate;
+            String dayString;
+
             try {
                 switch(sc.nextInt()) {
                     case 1:
                         //일정등록 함수 호출
+                        whatYear = inputYear();
+                        whatMonth = inputMonth();
+                        whatDate = inputDate(whatYear,whatMonth);
+                        dayString = whatYear.toString() + whatMonth.toString() +whatDate.toString();
+                        System.out.println("일정을 입력하세요.");
+                        sc.nextLine();
+                        String todoString = sc.nextLine();
+                        todoUpdate(dayString,todoString );
                         break;
                     case 2:
                         //일정검색 함수3
+                        whatYear = inputYear();
+                        whatMonth = inputMonth();
+                        whatDate = inputDate(whatYear,whatMonth);
+                        printTodo(whatYear.toString() + whatMonth.toString() +whatDate.toString());
+
                         break;
                     case 3:
                         LocalDate now = LocalDate.now();
@@ -44,10 +67,27 @@ public class Calender {
 
             }
         }
-
-
     }
 
+    static void todoUpdate(String date, String todo) {
+        if(!todolist.containsKey(date)) {
+            todolist.put(date,new ArrayList<String>());
+            todolist.get(date).add(todo);
+        } else {
+            todolist.get(date).add(todo);
+        }
+    }
+
+    static void printTodo(String date) {
+        if(!todolist.containsKey(date)) {
+            System.out.println("일정이 없습니다.");
+        } else {
+            int i = 1;
+            for(String todo:todolist.get(date)){
+                System.out.printf("%d. %s \n",i++,todo);
+            }
+        }
+    }
 
     static int inputYear() {
         int year;
@@ -55,12 +95,14 @@ public class Calender {
         while(true) {
             try {
                 year = sc.nextInt();
-                if(year > 0){
+                if(year > 1582 && year <2500){
                     break;
+                } else {
+                    System.out.println("1583이상 2500이하의 숫자를 입력하세요.");
                 }
             } catch (InputMismatchException e) {
                 sc.nextLine();
-                System.out.println("숫자를 입력하세요.");
+                System.out.println("1583이상 2500이하의 숫자를 입력하세요.");
             }
         }
 
@@ -84,10 +126,35 @@ public class Calender {
                 }
             } catch (InputMismatchException e) {
                 sc.nextLine();
-                System.out.println("숫자를 입력하세요.");
+                System.out.println("1에서 12사이의 수를 입력하세요");
             }
         }
         return month;
+    }
+
+    static int inputDate(int year, int month) {
+        int date;
+        System.out.println("날짜를 입력하세요.");
+        while(true) {
+            try {
+                date = sc.nextInt();
+                if (leapYear(year)) {
+                    if (date > 0 && date <= leapMonthEnd[month]) {
+                        return date;
+                    } else {
+                        System.out.println("실제로 있는 날짜를 입력하세요.");
+                    }
+                } else {
+                    if (date > 0 && date <= monthEnd[month]) {
+                        return date;
+                    } else {
+                        System.out.println("실제로 있는 날짜를 입력하세요.");
+                    }
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("실제로 있는 날짜를 입력하세요.");
+            }
+        }
     }
 
     static int inputDay() {
