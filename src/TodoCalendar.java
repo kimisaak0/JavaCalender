@@ -87,7 +87,6 @@ public class TodoCalendar extends InputCalendarData {
             saveTxt.write(todo.getBytes());
             saveTxt.write("\n".getBytes());
 
-
         } catch(Exception e) {
             System.out.println(e);
         }
