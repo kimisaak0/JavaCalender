@@ -1,19 +1,25 @@
+import java.io.FileWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.io.RandomAccessFile;
+
 
 
 public class TodoCalendar extends InputCalendarData {
 
     static HashMap<String, ArrayList<String>> todolist = new HashMap<>();
 
+    final int EOF = -1;
+
     public void consoleUI() {
         while(true) {
             System.out.println("1. 일정 등록");
             System.out.println("2. 일정 검색");
-            System.out.println("3. 달력 보기");
-            System.out.println("4. 프로그램 종료");
+            System.out.println("3. 전체 일정 출력");
+            System.out.println("4. 달력 보기");
+            System.out.println("5. 프로그램 종료");
 
             Integer whatYear;
             Integer whatMonth;
@@ -42,13 +48,16 @@ public class TodoCalendar extends InputCalendarData {
 
                         break;
                     case 3:
+                        printAllTodo();
+                        break;
+                    case 4:
                         LocalDate now = LocalDate.now();
                         int nowYear = now.getYear();
                         int nowMonth = now.getMonthValue();
                         int nowDay = circulateDay(nowYear,nowMonth);
                         printCalendar(nowYear,nowMonth);
                         break;
-                    case 4:
+                    case 5:
                         return;
                     default:
                         System.out.println("메뉴를 다시 선택해주세요.");
@@ -65,6 +74,24 @@ public class TodoCalendar extends InputCalendarData {
 
 
     private void todoUpdate(String date, String todo) {
+        try {
+            RandomAccessFile saveTxt = new RandomAccessFile(".\\save\\todoSave.txt", "rw");
+
+            int pf = saveTxt.read();
+            while(pf != EOF) {
+                pf = saveTxt.read();
+            }
+
+            saveTxt.write(date.getBytes());
+            saveTxt.write(" ".getBytes());
+            saveTxt.write(todo.getBytes());
+            saveTxt.write("\n".getBytes());
+
+
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+
         if(!todolist.containsKey(date)) {
             todolist.put(date,new ArrayList<String>());
             todolist.get(date).add(todo);
@@ -73,7 +100,28 @@ public class TodoCalendar extends InputCalendarData {
         }
     }
 
+    private void printAllTodo() {
+        try {
+            RandomAccessFile saveTxt = new RandomAccessFile(".\\save\\todoSave.txt", "rw");
+            byte[] oneChar = new byte[2];
+
+            int pf = saveTxt.read(oneChar);
+
+            while (pf != EOF) {
+                String ch = new String(oneChar);
+                System.out.print(ch);
+                pf = saveTxt.read(oneChar);
+            }
+
+        } catch(Exception e) {
+            System.out.println(e);
+
+        }
+    }
+
     private void printTodo(String date) {
+
+
         if(!todolist.containsKey(date)) {
             System.out.println("일정이 없습니다.");
         } else {
